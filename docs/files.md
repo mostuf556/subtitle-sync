@@ -56,6 +56,8 @@ This document maintains the registry of codebase files, their specific roles, ar
 | `e2e/web.spec.ts` | Playwright Web Test | Tests web demo fixture loading, theme toggling, favorite language controls, and SSR hydration consistency. |
 | `e2e/app.spec.ts` | Playwright App Smoke Test | Verifies core UI rendering and table layout integrity. |
 | `e2e/emulation.spec.ts` | Android Native Shell Emulation Test | Simulates Android bridge timedtext interception and `tlang` subtitle track retrieval. |
+| `e2e/dynamic-subtitles-zyuhmurjmts.spec.ts` | Dynamic Subtitles E2E Test | Tests dynamic live subtitle fetching for video ZYUHmuRjMTs on Android without fixtures. |
+| `scripts/verify-dynamic-subtitles-zyuhmurjmts.ts` | Dynamic Caption & Bridge Verification | Verifies fixture-less enforcement and dynamic Android bridge fetching for video ZYUHmuRjMTs across favorite languages. |
 | `scripts/verify-caption-formats.ts` | Caption Format Verification | Asserts valid JSON3 structure across all repository subtitle fixtures. |
 | `scripts/verify-ota-updater.ts` | OTA Updater Test Suite | Tests version comparison, GitHub release artifact resolution, and bundle application. |
 | `scripts/verify-audio-track-mode.ts` | Audio-Track Repeat Mode Test Suite | Validates default OFF state, preference persistence, audio track matching, and repeat pipeline. |

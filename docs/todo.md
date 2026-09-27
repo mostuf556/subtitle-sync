@@ -1,19 +1,12 @@
 # Active Sub-task
 
-## Subtask 17.1: Restore default language subtitle fetching and favorite languages `tlang` replacement on Android
+## Subtask 19.2: Dedicated E2E tests for Android dynamic subtitle fetching on video ZYUHmuRjMTs
 
 - **Goal**:
-  1. Fix the Android app so it fetches and displays subtitles for the default language.
-  2. After observing the network request for the default subtitles, replace the `tlang` parameter with the favorite languages' language codes and fetch them as well (matching `mostuf2556/Youtubenet6`).
+  1. Update Cypress (`cypress/e2e/emulation.cy.ts`) and Playwright (`e2e/emulation.spec.ts`) E2E test suites to test dynamic subtitle fetching for `https://www.youtube.com/watch?v=ZYUHmuRjMTs` without fixtures.
+  2. Assert real-time subtitle observation, verify favorite language selections (`en`, `he`, `es`, `ar`), and validate `tlang` substitution.
 - **Implementation**:
-  - In `MainActivity.kt` (`executeTimedTextRepetition`):
-    - When `targetLang` matches the URL's original `lang` parameter (the default language), do not append a `tlang` query parameter (or remove any existing `tlang`), ensuring YouTube returns the native/default language caption without 400 bad request error.
-    - When `targetLang` is another favorite/desired language, replace or append `tlang` with that language's code, keeping all original query parameters (and applying `fmt` such as `json3`).
-  - In `src/routes/index.tsx`:
-    - Ensure that when a timedtext URL is intercepted, both the default language (`lang`) and all favorite languages (`targetLanguages`) are included in `selected`.
-    - Also ensure `shown` includes the default language and favorite languages so that columns are not hidden.
-    - In `cols`, ensure the default language and favorite languages with loaded tracks are shown.
-  - In `e2e/emulation.spec.ts` & dedicated test script `scripts/verify-default-and-favorite-captions.ts`:
-    - Test that the default language track is requested/loaded and that each favorite language has its `tlang` replaced and fetched.
-  - Commit changes and tests before running verification.
-  - Test thoroughly, lint, and compile.
+  - Update `cypress/e2e/emulation.cy.ts` to navigate to `ZYUHmuRjMTs`, test caption toggle and subtitle observation, verify target language switching (`es`, `he`), and assert that authentic subtitles are loaded without fixture reliance.
+  - Update `e2e/emulation.spec.ts` with test coverage for video `ZYUHmuRjMTs` validating dynamic native bridge dispatch, favorite language fetching, and table rendering.
+  - Commit changes and dedicated tests before executing them.
+  - Run linting and test execution checks.

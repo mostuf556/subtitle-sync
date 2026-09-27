@@ -1,5 +1,11 @@
 # Tasks
 
+## Task 19: Dynamic Android Subtitle Fetching and Emulator Report for Video ZYUHmuRjMTs
+
+- [x] **Subtask 19.1: Dynamic timedtext fetching and Android bridge verification for video ZYUHmuRjMTs (no fixtures)**: Configure dynamic caption fetching for `https://www.youtube.com/watch?v=ZYUHmuRjMTs` through the Android native bridge and network interceptor without fixture fallbacks, fetching authentic subtitles across selected favorite languages (e.g. English, Hebrew, Spanish, Arabic) via native `tlang` query replacement.
+- [ ] **Subtask 19.2: Dedicated E2E tests for Android dynamic subtitle fetching on video ZYUHmuRjMTs**: Update Cypress (`cypress/e2e/emulation.cy.ts`) and Playwright (`e2e/emulation.spec.ts`) test suites to navigate to `ZYUHmuRjMTs` without fixtures, assert real-time caption observation, and verify that all selected favorite languages fetch their respective subtitle tracks.
+- [ ] **Subtask 19.3: Update Android Emulator E2E Report with complete subtitles for all favorited languages**: Update `scripts/generate-android-report.mjs` and `android-emulator-report.html` to document video `ZYUHmuRjMTs`, including the full set of subtitle cues for each favorited language, detailed HTTP timedtext request/response inspection with headers, and rerun report generation and integrity validation.
+
 ## Task 17: Restore default language subtitle fetching and favorite languages `tlang` replacement on Android
 
 - [ ] **Subtask 17.1: Restore default language subtitle fetching and favorite languages `tlang` replacement on Android**: When observing the network request for default subtitles, ensure the default language track is preserved/fetched without an invalid `tlang`, and replace `tlang` with each favorite language's code to fetch all favorite languages as implemented in `mostuf2556/Youtubenet6`. Add dedicated tests, commit before execution, test, and verify.

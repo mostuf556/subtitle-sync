@@ -30,6 +30,7 @@
     "test:audio-track": "tsx scripts/verify-audio-track-mode.ts",
     "test:auto-scroll": "tsx scripts/verify-auto-scroll.ts",
     "test:hydration": "tsx scripts/verify-hydration.ts",
+    "test:dynamic-subtitles": "tsx scripts/verify-dynamic-subtitles-zyuhmurjmts.ts",
     "test:android": "bash scripts/run-android-e2e.sh",
     "test:android:report": "node scripts/generate-android-report.mjs",
     "test:report:integrity": "node scripts/verify-reports-integrity.mjs"

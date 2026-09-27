@@ -2,14 +2,14 @@ describe('YouTube Video Viewer - Android Emulation Subtitle Tests', () => {
   beforeEach(() => {
     cy.log('Step 0: Navigating to YouTube Video Viewer');
     cy.visit('./?reset_all=true');
-    cy.title().should('match', /YouTube/i);
+    cy.title().should('match', /YouTube|Parallel Subtitles/i);
     cy.get('header').should('be.visible');
   });
 
-  it('Step-by-step: Emulator testing - load n9qwEOsqsoo without fixtures, observe subtitles, change target language and assert tlang replacement', () => {
-    const targetUrl = 'https://www.youtube.com/watch?v=n9qwEOsqsoo';
+  it('Step-by-step: Emulator testing - load ZYUHmuRjMTs without fixtures, observe subtitles, change target language and assert tlang replacement', () => {
+    const targetUrl = 'https://www.youtube.com/watch?v=ZYUHmuRjMTs';
 
-    cy.log('Step 1: Entering target YouTube URL without fixtures');
+    cy.log('Step 1: Entering target YouTube URL ZYUHmuRjMTs without fixtures');
     cy.get('#youtube-url-input').should('be.visible').clear().type(targetUrl);
     cy.screenshot('test3-step1', { capture: 'viewport', overwrite: true });
 

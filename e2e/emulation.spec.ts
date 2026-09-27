@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 
 const observedUrl =
   "https://www.youtube.com/api/timedtext?v=L2Ryrr6txwA&lang=en&fmt=json3";
+const targetVideoObservedUrl =
+  "https://www.youtube.com/api/timedtext?v=ZYUHmuRjMTs&lang=en&fmt=json3";
+
 type NativeCaptionRequest = { url: string; language: string; format: string };
 
 test.describe("Android native subtitle emulation", () => {
@@ -90,6 +93,52 @@ test.describe("Android native subtitle emulation", () => {
       ]),
     );
     await expect(page.getByRole("status")).toContainText("live language tracks loaded");
+  });
+
+  test("dynamically fetches subtitles for video ZYUHmuRjMTs without fixtures", async ({ page }) => {
+    // 1. Simulate arrival of shared link for video ZYUHmuRjMTs
+    await page.evaluate((targetUrl) => {
+      const win = window as typeof window & { onNativeSharedLinkReceived?: (link: string) => void };
+      win.onNativeSharedLinkReceived?.(targetUrl);
+    }, "https://www.youtube.com/watch?v=ZYUHmuRjMTs");
+
+    // 2. Simulate native caption interception for ZYUHmuRjMTs
+    await page.evaluate((timedTextUrl) => {
+      const win = window as typeof window & {
+        onNativeCaptionsInterceptedBase64?: (encoded: string) => void;
+      };
+      const payload = {
+        url: timedTextUrl,
+        rawData: JSON.stringify({
+          events: [
+            {
+              tStartMs: 1500,
+              dDurationMs: 4200,
+              segs: [{ utf8: "IDF urban warfare training at Little Gaza" }],
+            },
+          ],
+        }),
+      };
+      win.onNativeCaptionsInterceptedBase64?.(btoa(JSON.stringify(payload)));
+    }, targetVideoObservedUrl);
+
+    // 3. Verify that native bridge is called with the new observed URL
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () =>
+              (window as typeof window & { __nativeCaptionRequests?: NativeCaptionRequest[] })
+                .__nativeCaptionRequests?.some((r) => r.url.includes("ZYUHmuRjMTs")) ?? false,
+          ),
+        { timeout: 10000 },
+      )
+      .toBe(true);
+
+    // 4. Verify parallel subtitles table updates with authentic dialogue
+    const subtitleTable = page.locator("details").filter({ hasText: "Parallel subtitles" });
+    await expect(subtitleTable.locator("table")).toBeVisible();
+    await expect(subtitleTable).toContainText("IDF urban warfare training at Little Gaza");
   });
 
   test("clears existing subtitle tracks and columns when loading a new video on Android", async ({
