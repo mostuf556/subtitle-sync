@@ -31,6 +31,7 @@
     "test:auto-scroll": "tsx scripts/verify-auto-scroll.ts",
     "test:hydration": "tsx scripts/verify-hydration.ts",
     "test:dynamic-subtitles": "tsx scripts/verify-dynamic-subtitles-zyuhmurjmts.ts",
+    "test:report:subtitles": "node scripts/verify-subtask-19-3-report.mjs",
     "test:android": "bash scripts/run-android-e2e.sh",
     "test:android:report": "node scripts/generate-android-report.mjs",
     "test:report:integrity": "node scripts/verify-reports-integrity.mjs"

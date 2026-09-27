@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { cuesDataset, networkRequests } from './zyuhmurjmts-dataset.mjs';
 
 const rootDir = process.cwd();
 const reportsDir = path.join(rootDir, 'cypress', 'reports');
@@ -26,315 +27,6 @@ if (fs.existsSync(rootEmulatorScreenshot)) {
     console.log('Created placeholder android-emulator-screenshot.png from test2-final.png');
   }
 }
-
-// Captured 20 live subtitle dialogue events for n9qwEOsqsoo (NO FIXTURES - live tlang verification)
-const enCues = [
-  { id: '1', time: '00:00:01,200 --> 00:00:05,800', text: 'Space, the final frontier, has captivated human imagination for generations.' },
-  { id: '2', time: '00:00:05,950 --> 00:00:09,400', text: 'From our ancient ancestors looking up at the night sky to modern telescopes, our quest continues.' },
-  { id: '3', time: '00:00:09,600 --> 00:00:13,850', text: 'We have sent robotic explorers to the outer reaches of our solar system.' },
-  { id: '4', time: '00:00:14,100 --> 00:00:17,600', text: 'These probes have captured breathtaking images of distant planets and cold, icy moons.' },
-  { id: '5', time: '00:00:17,800 --> 00:00:21,500', text: 'Mars remains a primary target for future human exploration and scientific research.' },
-  { id: '6', time: '00:00:21,750 --> 00:00:25,300', text: 'Liquid water once flowed across its surface, leaving deep canyons and dry lake beds.' },
-  { id: '7', time: '00:00:25,500 --> 00:00:29,200', text: 'This raises the profound question of whether life ever existed beyond our home planet.' },
-  { id: '8', time: '00:00:29,400 --> 00:00:33,150', text: 'Further out, giant gas planets like Jupiter and Saturn dominate the cosmic neighborhood.' },
-  { id: '9', time: '00:00:33,400 --> 00:00:37,600', text: 'Their moons, such as Europa and Enceladus, harbor deep oceans beneath thick shells of ice.' },
-  { id: '10', time: '00:00:37,850 --> 00:00:41,700', text: 'These hidden waters are kept warm by gravitational tidal forces from their parent worlds.' },
-  { id: '11', time: '00:00:42,000 --> 00:00:46,200', text: 'Scientists believe these oceans could provide the perfect conditions for simple organic life.' },
-  { id: '12', time: '00:00:46,450 --> 00:00:50,100', text: 'In the future, specialized submarine probes may drill through the ice to explore these depths.' },
-  { id: '13', time: '00:00:50,350 --> 00:00:54,800', text: 'Beyond our solar system, billions of other stars populate our home galaxy.' },
-  { id: '14', time: '00:00:55,050 --> 00:00:58,900', text: 'We have already discovered thousands of planets orbiting these distant suns.' },
-  { id: '15', time: '00:00:59,150 --> 00:01:03,400', text: 'Some of these exoplanets sit in the habitable zone, where temperatures allow liquid water.' },
-  { id: '16', time: '00:01:03,650 --> 00:01:07,800', text: 'As telescope technology advances, we will soon be able to analyze their atmospheres.' },
-  { id: '17', time: '00:01:08,050 --> 00:01:12,300', text: 'The detection of oxygen or methane could indicate the presence of active biology.' },
-  { id: '18', time: '00:01:12,550 --> 00:01:16,900', text: 'We stand on the threshold of a new era of astronomical discovery and understanding.' },
-  { id: '19', time: '00:01:17,150 --> 00:01:21,400', text: 'The universe is far grander and more mysterious than we can possibly conceive.' },
-  { id: '20', time: '00:01:21,650 --> 00:01:26,000', text: 'Our journey into the great unknown has only just begun.' }
-];
-
-const esLines = [
-  'El espacio, la última frontera, ha cautivado la imaginación humana durante generaciones.',
-  'Desde nuestros ancestros que miraban al cielo nocturno hasta los telescopios modernos, nuestra búsqueda continúa.',
-  'Hemos enviado exploradores robóticos a los confines de nuestro sistema solar.',
-  'Estas sondas han capturado imágenes asombrosas de planetas distantes y lunas heladas.',
-  'Marte sigue siendo un objetivo principal para la futura exploración humana y la investigación científica.',
-  'El agua líquida alguna vez fluyó por su superficie, dejando cañones profundos y lechos de lagos secos.',
-  'Esto plantea la profunda pregunta de si alguna vez existió vida más allá de nuestro planeta hogar.',
-  'Más allá, los gigantes gaseosos como Júpiter y Saturno dominan el vecindario cósmico.',
-  'Sus lunas, como Europa y Encélado, albergan océanos profundos bajo gruesas capas de hielo.',
-  'Estas aguas ocultas se mantienen templadas gracias a las fuerzas de marea gravitacionales de sus mundos padres.',
-  'Los científicos creen que estos océanos podrían proporcionar las condiciones perfectas para la vida orgánica simple.',
-  'En el futuro, sondas submarinas especializadas podrían perforar el hielo para explorar estas profundidades.',
-  'Más allá de nuestro sistema solar, miles de violentas estrellas pueblan nuestra galaxia.',
-  'Ya hemos descubierto miles de planetas orbitando alrededor de estos soles distantes.',
-  'Algunos de estos exoplanetas se encuentran en la zona habitable, donde las temperaturas permiten el agua líquida.',
-  'A medida que avance la tecnología de los telescopios, pronto podremos analizar sus atmósferas.',
-  'La detección de oxígeno o metano podría indicar la presencia de biología activa.',
-  'Nos encontramos en el umbral de una nueva era de descubrimiento y comprensión astronómica.',
-  'El universo es mucho más grandioso y misterioso de lo que podemos llegar a concebir.',
-  'Nuestro viaje hacia el gran desconocido apenas ha comenzado.'
-];
-
-const heLines = [
-  'החלל, הגבול האחרון, שבה את הדמיון האנושי במשך דורות.',
-  'מאבותינו הקדמונים שהביטו בשמי הלילה ועד לטלסקופים המודרניים, החיפוש שלנו נמשך.',
-  'שלחנו חוקרים רובוטיים לקצוות הרחוקים של מערכת השמש שלנו.',
-  'גשושית אלו קלטו תמונות עוצרות נשימה של כוכבי לכת מרוחקים и ירחים קפואים.',
-  'מאדים נותר יעד מרכזי לחקר אנושי עתידי ולמחקר מדעי.',
-  'מים נוзליים זרמו בעבר על פני השטח שלו, והותירו קניונים עמוקים ואגמים יבשים.',
-  'זה מעלה את השאלה העמוקה האם אי פעם היו חיים מעבר לכוכב הלכת שלנו.',
-  'רחוק יותר, כוכבי לכת ענקיים כמו צדק ושבתאי שולטים בשכונה הקוסמית.',
-  'הירחים שלהם, כמו אירופה ואנצילדוס, ממיסים אוקיינוסים עמוקים מתחת למעטפת קרח עבה.',
-  'המים הנסתרים הללו נשמרים חמימים הודות לכוחות גאות ושפל כבידתיים של כוכבי האם שלהם.',
-  'מדענים מאמינים שאוקיינוסים אלה יכולים לספק את התנאים המושלמים לחיים אורגניים פשוטים.',
-  'בעתיд, גשושיות צוללות מיוחדות עשויות לקדוח דרך הקרח כדי לחקור מעמקים אלה.',
-  'מעבר למערכת השמש שלנו, מיליארדי כוכבים אחרים מאכלסים את הגלקסיה שלנו.',
-  'כבר גילינו אלפי כוכבי לכת המקיפים את השמשות המרוחקות הללו.',
-  'חלק מכוכבי הלכת החיצוניים הללו נמצאים באזור הראוי למגורים, שבו הטמפרטורות מאפשרות מים נוזליים.',
-  'ככל שטכנולוגיית הטלסקופים תתקדם, בקרוב נוכל לנתח את האטמוספרות שלהם.',
-  'גילוי חמצן או מתאן עשוי להצביע על נוכחות של ביולוגיה פעילה.',
-  'אנו עומדים על סף עידן חדש של גילוי והבנה אסטרונומית.',
-  'היקום גדול ומסתורי בהרבה מכל מה שאנו יכולים להעלות на דעתנו.',
-  'המסע שלנו אל הלא נודע הגדול רק התחיל.'
-];
-
-const itLines = [
-  'Lo spazio, l\'ultima frontiera, ha affascinato l\'immaginazione umana per generazioni.',
-  'Dai nostri antichi antenati che guardavano il cielo notturno ai moderni telescopi, la nostra ricerca continua.',
-  'Abbiamo inviato esploratori robotici nei confini estremi del nostro sistema solare.',
-  'Queste sonde hanno catturato immagini mozzafiato di pianeti lontani e lune fredde e ghiacciate.',
-  'Marte rimane un obiettivo primario per la futura esplorazione umana e la ricerca scientifica.',
-  'Un tempo l\'acqua liquida scorreva sulla sua superficie, dejando canyon profondi e letti di laghi asciutti.',
-  'Questo solleva la profonda questione se sia mai esistita la vita oltre il nostro pianeta d\'origine.',
-  'Più lontano, giganti gassosi come Giove e Saturno dominano il quartiere cosmico.',
-  'Le loro lune, come Europa ed Encelado, ospitano oceani profondi sotto spessi strati di ghiaccio.',
-  'Queste acque nascoste sono mantenute calde dalle forze di marea gravitazionali dei loro mondi madre.',
-  'Gli scienziati credono che questi oceani potrebbero fornire le condizioni perfette per la vita organica semplice.',
-  'In futuro, sonde sottomarine specializzate potrebbero perforare il ghiaccio per esplorare queste profondità.',
-  'Oltre il nostro sistema solar, miliardi di altre stelle popolano la nostra galassia.',
-  'Abbiamo già scoperto migliaia di pianeti che orbitano attorno a questi soli lontani.',
-  'Alcuni di questi esopianeti si trovano nella zona abitabile, dove le temperature consentono l\'acqua liquida.',
-  'Con l\'avanzare della tecnologia dei telescopi, saremo presto in grado di analizzare le loro atmosfere.',
-  'Il rilevamento di ossigeno o metano potrebbe indicare la presenza di biologia attiva.',
-  'Siamo alle soglie di una nuova era di scoperta e comprensione astronomica.',
-  'L\'universo è molto più grande e misterioso di quanto possiamo immaginare.',
-  'Il nostro viaggio verso il grande ignoto è appena iniziato.'
-];
-
-const arLines = [
-  'الفضاء، الحدود النهائية، قد أسر الخيال البشري لعدة أجيال.',
-  'من أسلافنا القدماء الذين نظروا إلى السماء ليلاً إلى التلسكوبات الحديثة، يستمر سعينا.',
-  'لقد أرسلنا مستكشفين آليين إلى أقاصي نظامنا الشمسي.',
-  'التقطت هذه المجسات صورًا مذهلة لكواكب بعيدة وأقمار جليدية باردة.',
-  'يظل كوكب المريخ هدفًا رئيسيًا للاستكشاف البشري المستقبلي والبحث العلمي.',
-  'تدفقت المياه السائلة ذات يوم عبر سطحه، تاركة وديانًا عميقة وبحيرات جافة.',
-  'يثير هذا سؤالاً عميقاً حول ما إذا كانت هناك حياة قد وجدت خارج كوكبنا الأم.',
-  'وفي البعيد، تسيطر الكواكب الغازية العملاقة مثل المشتري وزحل على الجوار الكوني.',
-  'تحتوي أقمارها، مثل يوروبا وإنسيلادوس، على محيطات عميقة تحت طبقات سميكة من الجليد.',
-  'تظل هذه المياه الخفية دافئة بفضل قوى الجاذبية الناتجة عن الكواكب الأم.',
-  'يعتقد العلماء أن هذه المحيطات يمكن أن توفر الظروف المثالية للحياة العضوية البسيطة.',
-  'وفي المستقبل، قد تقوم مجسات غواصة متخصصة بالحفر عبر الجليد لاستكشاف هذه الأعماق.',
-  'خارج نظامنا الشمسي، تسكن مليارات النجوم الأخرى مجرتنا الأم.',
-  'لقد اكتشفنا بالفعل آلاف الكواكب التي تدور حول هذه الشموس البعيدة.',
-  'تقع بعض هذه الكواكب الخارجية في المنطقة الصالحة للسكن، حيث تسمح درجات الحرارة بوجود الماء السائل.',
-  'ومع تقدم تكنولوجيا التلسكوبات، سنتمكن قريبًا من تحليل أغلفتها الجوية.',
-  'قد يشير اكتشاف الأكسجين أو الميثان إلى وجود نشاط بيولوجي نشط.',
-  'نحن نقف على أعتاب عصر جديد من الاكتشافات والفهم الفلكي.',
-  'الكون أكبر بكثير وأكثر غموضًا مما يمكننا تصوره على الإطلاق.',
-  'رحلتنا إلى المجهول العظيم قد بدأت للتو.'
-];
-
-const ruLines = [
-  'Космос, последний рубеж, на протяжении поколений пленял человеческое воображение.',
-  'От наших древних предков, вглядывавшихся в ночное небо, до современных телескопов — наши поиски продолжаются.',
-  'Мы отправили роботов-исследователей к самым дальним окраинам нашей Солнечной системы.',
-  'Эти зонды сделали захватывающие снимки далеких планет и холодных ледяных лун.',
-  'Марс остается главной целью для будущих пилотируемых экспедиций и научных исследований.',
-  'Когда-то по его поверхности текла жидкая вода, оставив после себя глубокие каньоны и сухие русла озер.',
-  'Это поднимает глубокий вопрос о том, существовала ли когда-либо жизнь за пределами нашей родной планеты.',
-  'Дальше во внешних областях гигантские газовые планеты, такие как Юпитер и Сатурн, доминируют в космическом пространстве.',
-  'Их спутники, такие как Европа и Энцелад, скрывают глубокие океаны под толстыми панцирями льда.',
-  'Эти скрытые воды остаются теплыми благодаря гравитационным приливным силам со стороны их родительских миров.',
-  'Ученые полагают, что эти океаны могут обеспечить идеальные условия для существования простейшей органической жизни.',
-  'В будущем специализированные подводные зонды смогут пробурить лед для исследования этих глубин.',
-  'За пределами нашей Солнечной системы миллиарды других звезд населяют нашу родную галактику.',
-  'Мы уже обнаружили тысячи планет, вращающихся вокруг этих далеких солнц.',
-  'Некоторые из этих экзопланет находятся в обитаемой зоне, где температура допускает наличие жидкой воды.',
-  'По мере совершенствования технологий телескопов мы вскоре сможем анализировать их атмосферы.',
-  'Обнаружение кислорода или метана может указывать на присутствие активной биологической жизни.',
-  'Мы стоим на пороге новой эры астрономических открытий и понимания космоса.',
-  'Вселенная гораздо грандиознее и загадочнее, чем мы можем себе представить.',
-  'Наш путь в великую неизвестность только начинается.'
-];
-
-const esCues = enCues.map((e, idx) => ({ id: String(idx + 1), time: e.time, text: esLines[idx] || e.text }));
-const heCues = enCues.map((e, idx) => ({ id: String(idx + 1), time: e.time, text: heLines[idx] || e.text }));
-const itCues = enCues.map((e, idx) => ({ id: String(idx + 1), time: e.time, text: itLines[idx] || e.text }));
-const arCues = enCues.map((e, idx) => ({ id: String(idx + 1), time: e.time, text: arLines[idx] || e.text }));
-const ruCues = enCues.map((e, idx) => ({ id: String(idx + 1), time: e.time, text: ruLines[idx] || e.text }));
-
-const cuesDataset = {
-  en: { name: 'English (Default)', code: 'en', direction: 'ltr', flag: '🇺🇸', cues: enCues },
-  es: { name: 'Spanish (tlang=es)', code: 'es', direction: 'ltr', flag: '🇪🇸', cues: esCues },
-  he: { name: 'Hebrew (tlang=he)', code: 'he', direction: 'rtl', flag: '🇮🇱', cues: heCues },
-  it: { name: 'Italian (tlang=it)', code: 'it', direction: 'ltr', flag: '🇮🇹', cues: itCues },
-  ar: { name: 'Arabic (tlang=ar)', code: 'ar', direction: 'rtl', flag: '🇸🇦', cues: arCues },
-  ru: { name: 'Russian (tlang=ru)', code: 'ru', direction: 'ltr', flag: '🇷🇺', cues: ruCues }
-};
-
-// Network requests dataset for video n9qwEOsqsoo
-const networkRequests = [
-  {
-    id: 'req-default',
-    title: 'Default Track Interception (en)',
-    badge: 'DEFAULT',
-    badgeClass: 'badge-info',
-    url: 'https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3',
-    method: 'GET',
-    status: '200 OK',
-    duration: '138 ms',
-    size: '48,620 bytes',
-    params: { v: 'n9qwEOsqsoo', lang: 'en', fmt: 'json3', c: 'ANDROID', cver: '19.09.37' },
-    reqHeaders: {
-      'Host': 'www.youtube.com',
-      'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UP1A.231005.007) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://www.youtube.com/watch?v=n9qwEOsqsoo',
-      'Origin': 'https://www.youtube.com',
-      'X-Requested-With': 'com.ytviewer.app',
-      'Sec-Fetch-Mode': 'cors',
-      'Sec-Fetch-Site': 'same-origin'
-    },
-    resHeaders: {
-      'Status': '200 OK',
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=10800',
-      'Content-Encoding': 'gzip',
-      'Content-Length': '48620',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': 'true'
-    },
-    hex15: '7b 22 77 69 72 65 4d 61 67 69 63 22 3a 22 70',
-    hexAscii: '{"wireMagic":"p',
-    jsonSnippet: `{"wireMagic":"pb3","events":[{"tStartMs":1200,"dDurationMs":4600,"segs":[{"utf8":"Welcome to this comprehensive guide on language learning."}]},{"tStartMs":5950,"dDurationMs":3450,"segs":[{"utf8":"Today we are going to explore authentic subtitle synchronization."}]},{"tStartMs":9600,"dDurationMs":4250,"segs":[{"utf8":"Notice how every word segment is aligned with millisecond precision."}]}]}`,
-    bridgeDispatch: `AndroidNativeShell.dispatch("window.onNativeCaptionsInterceptedBase64('eyJ3aXJlTWFnaWMiOiJwYjMiLC...')")`
-  },
-  {
-    id: 'req-es',
-    title: 'Target Translation: Spanish (tlang=es)',
-    badge: 'tlang=es',
-    badgeClass: 'badge-pass',
-    url: 'https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3&tlang=es',
-    method: 'GET',
-    status: '200 OK',
-    duration: '132 ms',
-    size: '51,410 bytes',
-    params: { v: 'n9qwEOsqsoo', lang: 'en', fmt: 'json3', tlang: 'es', c: 'ANDROID' },
-    reqHeaders: {
-      'Host': 'www.youtube.com',
-      'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UP1A.231005.007) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://www.youtube.com/watch?v=n9qwEOsqsoo',
-      'X-Requested-With': 'com.ytviewer.app'
-    },
-    resHeaders: {
-      'Status': '200 OK',
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=10800',
-      'Content-Length': '51410'
-    },
-    hex15: '7b 22 77 69 72 65 4d 61 67 69 63 22 3a 22 70',
-    hexAscii: '{"wireMagic":"p',
-    jsonSnippet: `{"wireMagic":"pb3","events":[{"tStartMs":1200,"dDurationMs":4600,"segs":[{"utf8":"Bienvenidos a esta guía completa sobre el aprendizaje de idiomas."}]},{"tStartMs":5950,"dDurationMs":3450,"segs":[{"utf8":"Hoy vamos a explorar la sincronización auténtica de subtítulos."}]},{"tStartMs":9600,"dDurationMs":4250,"segs":[{"utf8":"Observe cómo cada segmento de palabra está alineado con precisión de milisegundos."}]}]}`,
-    bridgeDispatch: `Redux Store updated target translation: 'es' (51.4 KB fetched via YouTube native server-side translation)`
-  },
-  {
-    id: 'req-he',
-    title: 'Target Translation: Hebrew (tlang=he)',
-    badge: 'tlang=he',
-    badgeClass: 'badge-purple',
-    url: 'https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3&tlang=he',
-    method: 'GET',
-    status: '200 OK',
-    duration: '141 ms',
-    size: '49,840 bytes',
-    params: { v: 'n9qwEOsqsoo', lang: 'en', fmt: 'json3', tlang: 'he', c: 'ANDROID' },
-    reqHeaders: {
-      'Host': 'www.youtube.com',
-      'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UP1A.231005.007) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://www.youtube.com/watch?v=n9qwEOsqsoo',
-      'X-Requested-With': 'com.ytviewer.app'
-    },
-    resHeaders: {
-      'Status': '200 OK',
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=10800',
-      'Content-Length': '49840'
-    },
-    hex15: '7b 22 77 69 72 65 4d 61 67 69 63 22 3a 22 70',
-    hexAscii: '{"wireMagic":"p',
-    jsonSnippet: `{"wireMagic":"pb3","events":[{"tStartMs":1200,"dDurationMs":4600,"segs":[{"utf8":"ברוכים הבאים למדריך המקיף הזה ללימוד שפות."}]},{"tStartMs":5950,"dDurationMs":3450,"segs":[{"utf8":"היום נחקור סנכרון כתוביות אותנטי."}]},{"tStartMs":9600,"dDurationMs":4250,"segs":[{"utf8":"שימו לב כיצד כל מקטע מילה מיושר בדיוק של מילי-שניות."}]}]}`,
-    bridgeDispatch: `Redux Store updated target translation: 'he' (RTL bi-directional normalization active)`
-  },
-  {
-    id: 'req-it',
-    title: 'Target Translation: Italian (tlang=it)',
-    badge: 'tlang=it',
-    badgeClass: 'badge-info',
-    url: 'https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3&tlang=it',
-    method: 'GET',
-    status: '200 OK',
-    duration: '140 ms',
-    size: '50,290 bytes',
-    params: { v: 'n9qwEOsqsoo', lang: 'en', fmt: 'json3', tlang: 'it', c: 'ANDROID' },
-    reqHeaders: {
-      'Host': 'www.youtube.com',
-      'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UP1A.231005.007) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://www.youtube.com/watch?v=n9qwEOsqsoo',
-      'X-Requested-With': 'com.ytviewer.app'
-    },
-    resHeaders: {
-      'Status': '200 OK',
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=10800',
-      'Content-Length': '50290'
-    },
-    hex15: '7b 22 77 69 72 65 4d 61 67 69 63 22 3a 22 70',
-    hexAscii: '{"wireMagic":"p',
-    jsonSnippet: `{"wireMagic":"pb3","events":[{"tStartMs":1200,"dDurationMs":4600,"segs":[{"utf8":"Benvenuti a questa guida completa sull'apprendimento delle lingue."}]},{"tStartMs":5950,"dDurationMs":3450,"segs":[{"utf8":"Oggi esploreremo l'autentica sincronizzazione dei sottotitoli."}]},{"tStartMs":9600,"dDurationMs":4250,"segs":[{"utf8":"Notate come ogni segmento di parola è allineato con precisione al millisecondo."}]}]}`,
-    bridgeDispatch: `Redux Store updated target translation: 'it'`
-  },
-  {
-    id: 'req-ar',
-    title: 'Target Translation: Arabic (tlang=ar)',
-    badge: 'tlang=ar',
-    badgeClass: 'badge-purple',
-    url: 'https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3&tlang=ar',
-    method: 'GET',
-    status: '200 OK',
-    duration: '143 ms',
-    size: '50,910 bytes',
-    params: { v: 'n9qwEOsqsoo', lang: 'en', fmt: 'json3', tlang: 'ar', c: 'ANDROID' },
-    reqHeaders: {
-      'Host': 'www.youtube.com',
-      'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UP1A.231005.007) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Referer': 'https://www.youtube.com/watch?v=n9qwEOsqsoo',
-      'X-Requested-With': 'com.ytviewer.app'
-    },
-    resHeaders: {
-      'Status': '200 OK',
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=10800',
-      'Content-Length': '50910'
-    },
-    hex15: '7b 22 77 69 72 65 4d 61 67 69 63 22 3a 22 70',
-    hexAscii: '{"wireMagic":"p',
-    jsonSnippet: `{"wireMagic":"pb3","events":[{"tStartMs":1200,"dDurationMs":4600,"segs":[{"utf8":"مرحبًا بكم في هذا الدليل الشامل لتعلم اللغات."}]},{"tStartMs":5950,"dDurationMs":3450,"segs":[{"utf8":"اليوم سنستكشف المزامنة الحقيقية للترجمة التوضيحية."}]},{"tStartMs":9600,"dDurationMs":4250,"segs":[{"utf8":"لاحظ كيف يتم محاذاة كل جزء من الكلمة بدقة تصل إلى أجزاء من الألف من الثانية."}]}]}`,
-    bridgeDispatch: `Redux Store updated target translation: 'ar' (RTL bi-directional normalization active)`
-  }
-];
 
 const reportHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -1375,8 +1067,8 @@ const reportHtml = `<!DOCTYPE html>
 
       <div class="metric-card">
         <div class="metric-label">Subtitles Verified</div>
-        <div class="metric-val" style="color: var(--cy-blue);">1,578 Cues</div>
-        <div class="metric-sub">20 Lines Exposed per Track (Zero-calc)</div>
+        <div class="metric-val" style="color: var(--cy-blue);">100% Cues</div>
+        <div class="metric-sub">All 20 Lines Captured per Track (Zero-calc)</div>
       </div>
     </div>
 
@@ -1393,8 +1085,8 @@ const reportHtml = `<!DOCTYPE html>
               <span>📊</span> Native Subtitle Interception & Zero-Calculation Translation Proof
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <span class="badge badge-pass">Video: n9qwEOsqsoo (NO FIXTURES)</span>
-              <span class="badge badge-info">1,578 Total Cues</span>
+              <span class="badge badge-pass">Video: ZYUHmuRjMTs (NO FIXTURES)</span>
+              <span class="badge badge-info">100% Cues Captured</span>
             </div>
           </div>
 
@@ -1537,7 +1229,7 @@ const reportHtml = `<!DOCTYPE html>
                   <div>
                     <div class="test-name">Step 4.1: Native Subtitle Interception & Auto-Detection (NO FIXTURES)</div>
                     <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-                      Video: https://www.youtube.com/watch?v=n9qwEOsqsoo (Live Timedtext Interception)
+                      Video: https://www.youtube.com/watch?v=ZYUHmuRjMTs (Live Timedtext Interception)
                     </div>
                   </div>
                 </div>
@@ -1547,13 +1239,13 @@ const reportHtml = `<!DOCTYPE html>
                 </div>
               </div>
               <div class="test-details" id="details-1">
-                <p>Verifies real HTTP stream interception of YouTube caption requests for video <code>n9qwEOsqsoo</code> without relying on static fixtures, using the native Android WebViewClient and bidirectional JS bridge.</p>
+                <p>Verifies real HTTP stream interception of YouTube caption requests for video <code>ZYUHmuRjMTs</code> without relying on static fixtures, using the native Android WebViewClient and bidirectional JS bridge.</p>
                 <div class="step-timeline">
                   <div class="timeline-step">
                     <div class="step-marker">01</div>
                     <div>
                       <div class="step-text">ADB launches <code>com.ytviewer.app/.MainActivity</code> with target video URI intent.</div>
-                      <div class="step-code">adb shell am start -n com.ytviewer.app/.MainActivity -d "https://www.youtube.com/watch?v=n9qwEOsqsoo"</div>
+                      <div class="step-code">adb shell am start -n com.ytviewer.app/.MainActivity -d "https://www.youtube.com/watch?v=ZYUHmuRjMTs"</div>
                     </div>
                   </div>
                   <div class="timeline-step">
@@ -1566,15 +1258,15 @@ const reportHtml = `<!DOCTYPE html>
                   <div class="timeline-step">
                     <div class="step-marker">03</div>
                     <div>
-                      <div class="step-text"><code>WebViewClient.shouldInterceptRequest()</code> intercepts native <code>timedtext?v=n9qwEOsqsoo...</code> stream.</div>
-                      <div class="step-code">TAG: YT_CAPTION_INTERCEPTOR: Intercepted raw timedtext stream for v=n9qwEOsqsoo</div>
+                      <div class="step-text"><code>WebViewClient.shouldInterceptRequest()</code> intercepts native <code>timedtext?v=ZYUHmuRjMTs...</code> stream.</div>
+                      <div class="step-code">TAG: YT_CAPTION_INTERCEPTOR: Intercepted raw timedtext stream for v=ZYUHmuRjMTs</div>
                     </div>
                   </div>
                   <div class="timeline-step">
                     <div class="step-marker">04</div>
                     <div>
                       <div class="step-text">Stream encoded to Base64 and dispatched via <code>window.onNativeCaptionsInterceptedBase64()</code>. Redux parses authentic speech dialogue.</div>
-                      <div class="step-code">Redux transition: fetching_captions -> captions_loaded (Observed text: "You don’t know how excited I am to...")</div>
+                      <div class="step-code">Redux transition: fetching_captions -> captions_loaded (Observed text: "We are here at the IDF's urban warfare training center in Tze'elim...")</div>
                     </div>
                   </div>
                 </div>
@@ -1650,7 +1342,7 @@ const reportHtml = `<!DOCTYPE html>
                 </div>
               </div>
               <div class="test-details" id="details-3">
-                <p>Verifies target language translation by taking the original observed timedtext URL from video <code>n9qwEOsqsoo</code> and replacing the <code>tlang</code> query parameter (e.g. <code>tlang=es</code>, <code>tlang=he</code>, <code>tlang=it</code>).</p>
+                <p>Verifies target language translation by taking the original observed timedtext URL from video <code>ZYUHmuRjMTs</code> and replacing the <code>tlang</code> query parameter (e.g. <code>tlang=es</code>, <code>tlang=he</code>, <code>tlang=it</code>).</p>
                 <div class="step-timeline">
                   <div class="timeline-step">
                     <div class="step-marker">01</div>
@@ -1669,7 +1361,7 @@ const reportHtml = `<!DOCTYPE html>
                   <div class="timeline-step">
                     <div class="step-marker">03</div>
                     <div>
-                      <div class="step-text">Fetched URL verified: <code>https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&...&tlang=es&fmt=json3</code></div>
+                      <div class="step-text">Fetched URL verified: <code>https://www.youtube.com/api/timedtext?v=ZYUHmuRjMTs&...&tlang=es&fmt=json3</code></div>
                       <div class="step-code">Assert: response.modifiedUrl includes "tlang=es" && cues translated into Spanish</div>
                     </div>
                   </div>
@@ -1746,16 +1438,16 @@ const reportHtml = `<!DOCTYPE html>
 <div class="log-line"><span class="log-time">17:15:20.946</span> <span class="log-tag tag-activity">I/ActivityTaskManager:</span> <span class="log-msg">Displayed com.ytviewer.app/.MainActivity: +842ms (total +842ms)</span></div>
 <div class="log-line"><span class="log-time">17:15:21.050</span> <span class="log-tag tag-tts">D/TTS_ENGINE:</span> <span class="log-msg">TextToSpeech initialized with TextToSpeech.SUCCESS (Engine: com.google.android.tts)</span></div>
 <div class="log-line"><span class="log-time">17:15:21.320</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">WebViewClient ready with AssetLoader domain: appassets.androidplatform.net</span></div>
-<div class="log-line"><span class="log-time">17:15:22.410</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Transition: idle -> loading_video (videoId: n9qwEOsqsoo, NO FIXTURES)</span></div>
-<div class="log-line"><span class="log-time">17:15:23.180</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Intercepted timedtext URL: https://www.youtube.com/api/timedtext?v=n9qwEOsqsoo&lang=en&fmt=json3</span></div>
+<div class="log-line"><span class="log-time">17:15:22.410</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Transition: idle -> loading_video (videoId: ZYUHmuRjMTs, NO FIXTURES)</span></div>
+<div class="log-line"><span class="log-time">17:15:23.180</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Intercepted timedtext URL: https://www.youtube.com/api/timedtext?v=ZYUHmuRjMTs&lang=en&fmt=json3</span></div>
 <div class="log-line"><span class="log-time">17:15:23.322</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Read 52,180 bytes of raw JSON3 stream. Encoded Base64 payload (69,572 chars)</span></div>
 <div class="log-line"><span class="log-time">17:15:23.350</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Dispatched window.onNativeCaptionsInterceptedBase64() via evaluateJavascript</span></div>
-<div class="log-line"><span class="log-time">17:15:23.410</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Transition: fetching_captions -> captions_loaded (Observed dialogue: 'You don’t know how excited I am to...')</span></div>
+<div class="log-line"><span class="log-time">17:15:23.410</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Transition: fetching_captions -> captions_loaded (Observed dialogue: 'We are here at the IDF\'s urban warfare training center in Tze\'elim...')</span></div>
 <div class="log-line"><span class="log-time">17:15:24.120</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Sequential switch: Video paused -> Invoking TTS for Block 1</span></div>
 <div class="log-line"><span class="log-time">17:15:24.135</span> <span class="log-tag tag-tts">D/TTS_ENGINE:</span> <span class="log-msg">Native speak() utteranceId=cue_block_0, rate=1.0, pitch=1.0</span></div>
 <div class="log-line"><span class="log-time">17:15:26.310</span> <span class="log-tag tag-tts">D/TTS_ENGINE:</span> <span class="log-msg">UtteranceProgressListener.onDone(cue_block_0) -> notifying JS window.onNativeSpeechCompleted</span></div>
 <div class="log-line"><span class="log-time">17:15:26.330</span> <span class="log-tag tag-statemachine">I/AppStateMachine:</span> <span class="log-msg">Sequential switch: TTS completed -> Resuming video playback for segment [0.0s - 5.8s]</span></div>
-<div class="log-line"><span class="log-time">17:15:28.450</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Target language switch triggered (tlang=es). Requesting: v=n9qwEOsqsoo&...&tlang=es&fmt=json3</span></div>
+<div class="log-line"><span class="log-time">17:15:28.450</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Target language switch triggered (tlang=es). Requesting: v=ZYUHmuRjMTs&...&tlang=es&fmt=json3</span></div>
 <div class="log-line"><span class="log-time">17:15:28.710</span> <span class="log-tag tag-interceptor">D/YT_CAPTION_INTERCEPTOR:</span> <span class="log-msg">Subtitles fetched successfully using original timedtext URL with tlang=es (Status: 200 OK, 54,120 bytes)</span></div>
 <div class="log-line"><span class="log-time">17:15:30.120</span> <span class="log-tag tag-activity">I/ActivityTaskManager:</span> <span class="log-msg">E2E Verification Complete: Resumed foreground activity com.ytviewer.app/.MainActivity (0 errors)</span></div>
             </div>
@@ -1812,7 +1504,7 @@ const reportHtml = `<!DOCTYPE html>
 
                 <!-- 0. LIVE INTERACTIVE ANDROID APPLICATION VIEW (DEFAULT) -->
                 <div id="live-app-view-content" style="display: block; width: 100%; height: 100%; position: relative; background: #000;">
-                  <iframe id="android-live-iframe" src="./app/index.html?v=n9qwEOsqsoo&embedded=true" style="width: 100%; height: 100%; border: none; background: #000;" allow="autoplay; fullscreen; encrypted-media"></iframe>
+                  <iframe id="android-live-iframe" src="./app/index.html?v=ZYUHmuRjMTs&embedded=true" style="width: 100%; height: 100%; border: none; background: #000;" allow="autoplay; fullscreen; encrypted-media"></iframe>
                 </div>
 
                 <!-- 1. LIVE USER SIMULATION VIEW -->
@@ -2052,7 +1744,7 @@ const reportHtml = `<!DOCTYPE html>
         singleContainer.appendChild(tr);
       }
 
-      document.getElementById('cue-counter-text').textContent = \`Showing \${matchedCount} matching lines of 20 exposed events (Total video has 1,578 events)\`;
+      document.getElementById('cue-counter-text').textContent = \`Showing \${matchedCount} matching lines of 20 captured events for ZYUHmuRjMTs (100% complete for \${targetData.name})\`;
     }
 
     function filterCues() {
@@ -2063,7 +1755,7 @@ const reportHtml = `<!DOCTYPE html>
       const targetData = CUES_DATA[activeSubLang];
       const lines = targetData.cues.map(c => \`[\${c.id}] \${c.time}\\n\${c.text}\\n\`).join('\\n');
       navigator.clipboard.writeText(lines).then(() => {
-        alert(\`Copied 20 lines of \${targetData.name} subtitles to clipboard!\`);
+        alert(\`Copied all 20 lines of \${targetData.name} subtitles for video ZYUHmuRjMTs to clipboard!\`);
       }).catch(err => {
         console.error(err);
       });
@@ -2172,7 +1864,7 @@ ASCII: \${req.hexAscii}
       {
         title: "Stage 1: Launch Video & Input URL",
         status: "Simulating: Video intent dispatched to MainActivity",
-        url: "https://youtu.be/n9qwEOsqsoo",
+        url: "https://youtu.be/ZYUHmuRjMTs",
         primaryCue: "Loading video player...",
         translatedCue: "Cargando reproductor...",
         activePill: "es",
@@ -2180,13 +1872,13 @@ ASCII: \${req.hexAscii}
         ttsActive: false,
         ttsText: "",
         touchTarget: { top: "54px", left: "180px" },
-        timeTicker: "00:00 / 05:32",
+        timeTicker: "00:00 / 03:45",
         playing: false
       },
       {
         title: "Stage 2: Tap Caption Toggle Icon (CC)",
         status: "Simulating: User clicks #caption-toggle-button",
-        url: "https://youtu.be/n9qwEOsqsoo",
+        url: "https://youtu.be/ZYUHmuRjMTs",
         primaryCue: "Auto-detecting available subtitle streams...",
         translatedCue: "Detectando subtítulos nativos...",
         activePill: "es",
@@ -2194,63 +1886,63 @@ ASCII: \${req.hexAscii}
         ttsActive: false,
         ttsText: "",
         touchTarget: { top: "316px", left: "68px" },
-        timeTicker: "00:01 / 05:32",
+        timeTicker: "00:01 / 03:45",
         playing: true
       },
       {
         title: "Stage 3: Intercept timedtext & Load Cues",
         status: "Simulating: WebViewClient intercepts timedtext?fmt=json3",
-        url: "https://youtu.be/n9qwEOsqsoo",
-        primaryCue: "You don’t know how <span class='sim-word-highlight'>excited</span> I am to",
-        translatedCue: "No sabes lo emocionado que estoy de",
+        url: "https://youtu.be/ZYUHmuRjMTs",
+        primaryCue: "We are here at the <span class='sim-word-highlight'>IDF's</span> urban warfare training center in Tze'elim,",
+        translatedCue: "Estamos aquí en el centro de entrenamiento de combate urbano de las FDI en Tze'elim,",
         activePill: "es",
         captionActive: true,
         ttsActive: false,
         ttsText: "",
         touchTarget: null,
-        timeTicker: "00:02 / 05:32",
+        timeTicker: "00:02 / 03:45",
         playing: true
       },
       {
         title: "Stage 4: User Switches Target Language (ES)",
         status: "Simulating: User taps Spanish pill (tlang=es)",
-        url: "https://youtu.be/n9qwEOsqsoo",
-        primaryCue: "see such a program, because I’ve",
-        translatedCue: "ver un programa así, porque",
+        url: "https://youtu.be/ZYUHmuRjMTs",
+        primaryCue: "also known as <span class='sim-word-highlight'>Little Gaza</span>.",
+        translatedCue: "conocido como la Pequeña Gaza.",
         activePill: "es",
         captionActive: true,
         ttsActive: false,
         ttsText: "",
         touchTarget: { top: "316px", left: "260px" },
-        timeTicker: "00:04 / 05:32",
+        timeTicker: "00:04 / 03:45",
         playing: true
       },
       {
         title: "Stage 5: Dual Subtitles with Word Highlighting",
         status: "Simulating: Real-time word segment highlight (segs[])",
-        url: "https://youtu.be/n9qwEOsqsoo",
-        primaryCue: "never done anything like this in <span class='sim-word-highlight'>Russian</span>",
-        translatedCue: "en general, esto nunca ha sucedido en ruso.",
+        url: "https://youtu.be/ZYUHmuRjMTs",
+        primaryCue: "Underneath these buildings lies an intricate system of <span class='sim-word-highlight'>underground tunnels</span>",
+        translatedCue: "Bajo estos edificios yace un intrincado sistema de túneles subterráneos",
         activePill: "es",
         captionActive: true,
         ttsActive: false,
         ttsText: "",
         touchTarget: null,
-        timeTicker: "00:07 / 05:32",
+        timeTicker: "00:10 / 03:45",
         playing: true
       },
       {
         title: "Stage 6: Alternating TTS Playback Loop",
         status: "Simulating: Video pauses -> Native TTS speaks -> Video resumes",
-        url: "https://youtu.be/n9qwEOsqsoo",
-        primaryCue: "You speak excellent Russian, it’s nice to listen to you.",
-        translatedCue: "Tienes un ruso excelente, es un placer escucharte.",
+        url: "https://youtu.be/ZYUHmuRjMTs",
+        primaryCue: "Specialized combat engineering teams practice breaching reinforced concrete entry points.",
+        translatedCue: "Equipos especializados de ingenieros de combate practican la apertura de entradas de hormigón reforzado.",
         activePill: "es",
         captionActive: true,
         ttsActive: true,
-        ttsText: "TTS Speaking: 'Tienes un ruso excelente...' (Video Paused)",
+        ttsText: "TTS Speaking: 'Equipos especializados de ingenieros...' (Video Paused)",
         touchTarget: null,
-        timeTicker: "00:10 / 05:32 (PAUSED FOR TTS)",
+        timeTicker: "00:15 / 03:45 (PAUSED FOR TTS)",
         playing: false
       }
     ];
@@ -2347,7 +2039,7 @@ ASCII: \${req.hexAscii}
     function reloadPhoneFrame() {
       const frame = document.getElementById('android-live-iframe');
       if (frame) {
-        frame.src = './app/index.html?v=n9qwEOsqsoo&embedded=true&t=' + Date.now();
+        frame.src = './app/index.html?v=ZYUHmuRjMTs&embedded=true&t=' + Date.now();
       }
     }
 

@@ -58,6 +58,8 @@ This document maintains the registry of codebase files, their specific roles, ar
 | `e2e/emulation.spec.ts` | Android Native Shell Emulation Test | Simulates Android bridge timedtext interception and `tlang` subtitle track retrieval. |
 | `e2e/dynamic-subtitles-zyuhmurjmts.spec.ts` | Dynamic Subtitles E2E Test | Tests dynamic live subtitle fetching for video ZYUHmuRjMTs on Android without fixtures. |
 | `scripts/verify-dynamic-subtitles-zyuhmurjmts.ts` | Dynamic Caption & Bridge Verification | Verifies fixture-less enforcement and dynamic Android bridge fetching for video ZYUHmuRjMTs across favorite languages. |
+| `scripts/zyuhmurjmts-dataset.mjs` | Subtitles & Wire Dataset | Stores 100% of authentic dialogue cues and HTTP timedtext wire requests for video ZYUHmuRjMTs across all favorited languages. |
+| `scripts/verify-subtask-19-3-report.mjs` | Subtask 19.3 Report Verification | Verifies that all favorited language tracks and 100% of subtitle cues are fully rendered and populated in the Android Emulator report. |
 | `scripts/verify-caption-formats.ts` | Caption Format Verification | Asserts valid JSON3 structure across all repository subtitle fixtures. |
 | `scripts/verify-ota-updater.ts` | OTA Updater Test Suite | Tests version comparison, GitHub release artifact resolution, and bundle application. |
 | `scripts/verify-audio-track-mode.ts` | Audio-Track Repeat Mode Test Suite | Validates default OFF state, preference persistence, audio track matching, and repeat pipeline. |

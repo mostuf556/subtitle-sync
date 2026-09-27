@@ -1,5 +1,11 @@
 # Done tasks
 
+## Subtask 19.2: Dedicated E2E tests for Android dynamic subtitle fetching on video ZYUHmuRjMTs
+
+- Updated Cypress (`cypress/e2e/emulation.cy.ts`) test suite to load video `ZYUHmuRjMTs` without fixtures, toggle captions, observe live subtitles, verify authentic dialogue loading, and validate `tlang=es` parameter substitution and copied headers.
+- Updated Playwright (`e2e/emulation.spec.ts`) test suite with dedicated test simulating video URL sharing and dynamic arrival of intercepted timedtext for `ZYUHmuRjMTs`, asserting native bridge calls requesting translated tracks with the observed URL and validating parallel subtitle table rendering with authentic cues.
+- Verified with `npm run test:dynamic-subtitles`, `lint_applet`, and `compile_applet` with 100% passing tests and zero errors.
+
 ## Subtask 19.1: Dynamic timedtext fetching and Android bridge verification for video ZYUHmuRjMTs (no fixtures)
 
 - Enforced no-fixture mandate: confirmed and verified that video `ZYUHmuRjMTs` has zero static fixtures in `public/fixtures/` and `test/fixtures/`, relying strictly on live dynamic observation and Android bridge interception.
