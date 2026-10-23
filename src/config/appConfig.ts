@@ -4,13 +4,13 @@ import { LibraryVideoItem } from "../types";
  * Global Application Configuration & Default Settings
  */
 
-export const APP_VERSION = "1.0.78";
+export const APP_VERSION = "1.0.79";
 export const APP_COMMIT_ID =
   (typeof process !== "undefined" && process.env?.VITE_COMMIT_SHA) ||
   (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_COMMIT_SHA) ||
   "b840e11";
 export const APP_VERSION_DESCRIPTION =
-  "Fix missing useEffect import in ShareStateModal and Version 1.0.78 Parity";
+  "Minimal URL sharing with subtitles URL, video ID extraction, and state reproduction";
 export const ALL_RELEASES_URL = "https://github.com/mostuf2556/subtitle-sync/releases";
 
 export const DEFAULT_VIDEO_ID = "vBURridJXZ0";

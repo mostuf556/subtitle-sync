@@ -52,6 +52,7 @@ export function ShareStateModal({
   ttsProvider = "lovable",
   isAndroid = false,
 }: ShareStateModalProps) {
+  const [minimalMode, setMinimalMode] = useState<boolean>(true);
   const [selectedTargetLang, setSelectedTargetLang] = useState<string>(
     () => targetLanguages[0] || "he",
   );
@@ -123,6 +124,7 @@ export function ShareStateModal({
     return createShareableLink({
       baseUrl: useDemoBase ? DEMO_SITE_BASE_URL : undefined,
       useDemoSiteBase: useDemoBase,
+      minimal: minimalMode,
       videoId,
       sourceLangCode: baseLanguage || "en",
       subLang: baseLanguage || "en",
@@ -135,6 +137,7 @@ export function ShareStateModal({
     });
   }, [
     useDemoBase,
+    minimalMode,
     videoId,
     baseLanguage,
     includeTargetLang,
@@ -252,6 +255,26 @@ export function ShareStateModal({
                 : typeof window !== "undefined" && window.location
                   ? `${window.location.origin}${window.location.pathname}`
                   : DEMO_SITE_BASE_URL}
+            </p>
+          </div>
+
+          {/* Minimal Info Link Toggle (Requirement 1: minimal info with v extracted and subtitles_url) */}
+          <div className="flex flex-col gap-1.5 pb-2.5 border-b border-border/60">
+            <label className="flex items-center gap-2 font-medium cursor-pointer">
+              <input
+                type="checkbox"
+                data-testid="share-minimal-toggle"
+                checked={minimalMode}
+                onChange={(e) => setMinimalMode(e.target.checked)}
+                className="rounded border-input text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
+              />
+              <span className="flex items-center gap-1.5 text-foreground font-semibold">
+                <Share2 className="h-3.5 w-3.5 text-primary" />
+                <span>Minimal Info Link (Recommended)</span>
+              </span>
+            </label>
+            <p className="text-[11px] text-muted-foreground pl-5.5">
+              Contains minimal info: default subtitles URL and video ID extracted from it. Reliable, compact, and free of redundant parameters.
             </p>
           </div>
 

@@ -10,7 +10,7 @@ import { APP_VERSION } from "../src/config/appConfig";
 import { CURRENT_APK_VERSION } from "../src/utils/apkUpdater";
 
 console.log("=========================================================================");
-console.log("🧪 Verifying Subtitles URL Encoding in Share Links & Version 1.0.77 Parity");
+console.log("🧪 Verifying Subtitles URL Encoding in Share Links & Version 1.0.79 Parity");
 console.log("=========================================================================");
 
 const rootDir = process.cwd();
@@ -23,11 +23,11 @@ const sampleRawSubUrl =
 
 const shareLinkWithSubUrl = createShareableLink({
   useDemoSiteBase: true,
+  minimal: true,
   videoId: "vBURridJXZ0",
   sourceLangCode: "iw",
   subUrl: sampleRawSubUrl,
   targetLangs: ["he"],
-  ttsProvider: "lovable",
 });
 
 assert(
@@ -39,29 +39,23 @@ assert(
   "Shared link must include 'subtitles_url=' parameter",
 );
 assert(
-  shareLinkWithSubUrl.includes("sub_url="),
-  "Shared link must include backwards-compatible 'sub_url=' parameter",
+  !shareLinkWithSubUrl.includes("sub_url="),
+  "Shared link must NOT duplicate 'sub_url=' parameter to keep link minimal",
 );
 
 // Verify that the subtitles_url query param is properly percent-encoded
 const parsedUrl = new URL(shareLinkWithSubUrl);
 const extractedSubUrl = parsedUrl.searchParams.get("subtitles_url");
-const extractedLegacySubUrl = parsedUrl.searchParams.get("sub_url");
 
 assert.strictEqual(
   extractedSubUrl,
   sampleRawSubUrl,
   "Extracted subtitles_url parameter must match original unencoded raw timedtext URL",
 );
-assert.strictEqual(
-  extractedLegacySubUrl,
-  sampleRawSubUrl,
-  "Extracted sub_url parameter must match original unencoded raw timedtext URL",
-);
 
-console.log("✅ PASS: createShareableLink properly encodes both subtitles_url and sub_url parameters");
+console.log("✅ PASS: createShareableLink properly encodes subtitles_url without redundant sub_url duplicate");
 
-// 2. Verify parseShareableUrlState parses both subtitles_url and sub_url
+// 2. Verify parseShareableUrlState parses both subtitles_url and backwards-compatible sub_url
 console.log("\n📥 Section 2: URL State Hydration & Parameter Parsing");
 
 const parsedState = parseShareableUrlState(parsedUrl.search);
@@ -76,9 +70,12 @@ assert.strictEqual(
   "parseShareableUrlState must populate subtitlesUrl",
 );
 assert.strictEqual(parsedState.videoId, "vBURridJXZ0");
-assert.strictEqual(parsedState.sourceLangCode, "iw");
-assert.deepStrictEqual(parsedState.targetLangs, ["he"]);
-assert.strictEqual(parsedState.ttsProvider, "lovable");
+
+// Also test legacy sub_url parsing compatibility
+const legacyUrl = `${DEMO_SITE_BASE_URL}?v=vBURridJXZ0&sub_url=${encodeURIComponent(sampleRawSubUrl)}`;
+const legacyParsedState = parseShareableUrlState(new URL(legacyUrl).search);
+assert.strictEqual(legacyParsedState.subtitlesUrl, sampleRawSubUrl);
+assert.strictEqual(legacyParsedState.subUrl, sampleRawSubUrl);
 
 console.log("✅ PASS: parseShareableUrlState correctly reconstructs state from encoded link");
 
@@ -136,37 +133,37 @@ assert(
 
 console.log("✅ PASS: src/routes/index.tsx correctly hydrides subtitles_url and feeds native bridge fallback");
 
-// 5. Verify App Version 1.0.78 Parity Across All 5 Version Targets
-console.log("\n🏷️ Section 5: Version Parity Verification across all 5 Targets (1.0.78)");
+// 5. Verify App Version 1.0.79 Parity Across All 5 Version Targets
+console.log("\n🏷️ Section 5: Version Parity Verification across all 5 Targets (1.0.79)");
 
 // Target 1: package.json
 const pkgJsonPath = path.resolve(rootDir, "package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
-assert.strictEqual(pkg.version, "1.0.78", "package.json version must be 1.0.78");
+assert.strictEqual(pkg.version, "1.0.79", "package.json version must be 1.0.79");
 console.log(`✅ Target 1: package.json version = ${pkg.version}`);
 
 // Target 2: android-shell/app/build.gradle.kts
 const gradlePath = path.resolve(rootDir, "android-shell/app/build.gradle.kts");
 const gradleContent = fs.readFileSync(gradlePath, "utf-8");
 assert(
-  gradleContent.includes('versionName = "1.0.78"'),
-  "android-shell/app/build.gradle.kts versionName must be 1.0.78",
+  gradleContent.includes('versionName = "1.0.79"'),
+  "android-shell/app/build.gradle.kts versionName must be 1.0.79",
 );
 assert(
-  gradleContent.includes("versionCode = 10078"),
-  "android-shell/app/build.gradle.kts versionCode must be 10078",
+  gradleContent.includes("versionCode = 10079"),
+  "android-shell/app/build.gradle.kts versionCode must be 10079",
 );
-console.log("✅ Target 2: build.gradle.kts versionName = 1.0.78, versionCode = 10078");
+console.log("✅ Target 2: build.gradle.kts versionName = 1.0.79, versionCode = 10079");
 
 // Target 3: src/config/appConfig.ts
-assert.strictEqual(APP_VERSION, "1.0.78", "src/config/appConfig.ts APP_VERSION must be 1.0.78");
+assert.strictEqual(APP_VERSION, "1.0.79", "src/config/appConfig.ts APP_VERSION must be 1.0.79");
 console.log(`✅ Target 3: src/config/appConfig.ts APP_VERSION = ${APP_VERSION}`);
 
 // Target 4: src/utils/apkUpdater.ts
 assert.strictEqual(
   CURRENT_APK_VERSION,
-  "v1.0.78",
-  "src/utils/apkUpdater.ts CURRENT_APK_VERSION must be v1.0.78",
+  "v1.0.79",
+  "src/utils/apkUpdater.ts CURRENT_APK_VERSION must be v1.0.79",
 );
 console.log(`✅ Target 4: src/utils/apkUpdater.ts CURRENT_APK_VERSION = ${CURRENT_APK_VERSION}`);
 
@@ -174,12 +171,13 @@ console.log(`✅ Target 4: src/utils/apkUpdater.ts CURRENT_APK_VERSION = ${CURRE
 const appSettingsPath = path.resolve(rootDir, "src/utils/appSettings.ts");
 const appSettingsContent = fs.readFileSync(appSettingsPath, "utf-8");
 assert(
-  appSettingsContent.includes('version: "1.0.78"'),
-  "src/utils/appSettings.ts exportFullAppState snapshot version must be 1.0.78",
+  appSettingsContent.includes('version: "1.0.79"'),
+  "src/utils/appSettings.ts exportFullAppState snapshot version must be 1.0.79",
 );
-console.log("✅ Target 5: src/utils/appSettings.ts export snapshot version = 1.0.78");
+console.log("✅ Target 5: src/utils/appSettings.ts export snapshot version = 1.0.79");
 
 console.log("\n=========================================================================");
-console.log("🎉 ALL TESTS PASSED! Subtitles URL encoding & Version 1.0.78 verified!");
+console.log("🎉 ALL TESTS PASSED! Subtitles URL encoding & Version 1.0.79 verified!");
 console.log("=========================================================================");
+
 

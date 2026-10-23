@@ -2,6 +2,7 @@ import { useState, useCallback, useId } from "react";
 import { Button } from "./ui/button";
 import { parseVideoId, parseJson3 } from "../lib/native-captions";
 import { isValidJsonSubtitleResponse } from "../utils/subtitleCache";
+import { extractVideoIdFromSubtitlesUrl } from "../utils/urlStateManager";
 import { fetchViaServer, getFetchServerUrl } from "../lib/subtitle-fetch-plan";
 import { Json3 } from "../types";
 import {
@@ -92,14 +93,27 @@ export function WebDemoUrlsInput({
   }, []);
 
   const handleFetchSubtitles = useCallback(async () => {
-    const extractedVideoId = parseVideoId(videoUrlInput);
+    const trimmedSubtitlesInput = subtitlesUrlsInput.trim();
+    const lines = trimmedSubtitlesInput
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    // Requirement 1.2: The video id is to be extracted from 1.1 (subtitles URL)
+    let extractedVideoId = parseVideoId(videoUrlInput);
+    if (lines.length > 0) {
+      const idFromSub = extractVideoIdFromSubtitlesUrl(lines[0]);
+      if (idFromSub) {
+        extractedVideoId = idFromSub;
+      }
+    }
+
     if (!extractedVideoId) {
       setStatusType("error");
       setStatusMessage("Please enter a valid YouTube video URL or ID.");
       return;
     }
 
-    const trimmedSubtitlesInput = subtitlesUrlsInput.trim();
     if (!trimmedSubtitlesInput) {
       onLoadVideoAndSubtitles({
         videoId: extractedVideoId,
@@ -116,10 +130,6 @@ export function WebDemoUrlsInput({
     setStatusType("info");
     setStatusMessage("Fetching and validating subtitle streams per language…");
 
-    const lines = trimmedSubtitlesInput
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
     const entriesToFetch: ParsedUrlEntry[] = [];
 
     // Check if input is a single timedtext URL template
@@ -132,15 +142,14 @@ export function WebDemoUrlsInput({
         const u = new URL(baseUrl);
         const originalLang = u.searchParams.get("lang") || "en";
 
+        // Always fetch original URL first with its authentic language
+        entriesToFetch.push({ lang: originalLang, url: baseUrl });
+
         for (const targetCode of selectedLangs) {
+          if (targetCode === originalLang) continue;
           const derived = new URL(baseUrl);
-          if (targetCode === originalLang) {
-            derived.searchParams.set("lang", targetCode);
-            derived.searchParams.delete("tlang");
-          } else {
-            derived.searchParams.set("lang", originalLang);
-            derived.searchParams.set("tlang", targetCode);
-          }
+          derived.searchParams.set("lang", originalLang);
+          derived.searchParams.set("tlang", targetCode);
           entriesToFetch.push({ lang: targetCode, url: derived.toString() });
         }
       } catch {

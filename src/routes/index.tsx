@@ -99,7 +99,11 @@ import {
   setRemoveCharsSetting,
 } from "@/utils/appSettings";
 import { SpecialCharactersRemovalPanel } from "@/components/SpecialCharactersRemovalPanel";
-import { getAppStateFromUrl } from "@/utils/urlStateManager";
+import {
+  getAppStateFromUrl,
+  extractVideoIdFromSubtitlesUrl,
+  extractLanguageFromSubtitlesUrl,
+} from "@/utils/urlStateManager";
 import { ShareStateModal } from "@/components/ShareStateModal";
 import { ParserDiffConfirmationModal } from "@/components/ParserDiffConfirmationModal";
 import { VideoMetadataModal } from "@/components/VideoMetadataModal";
@@ -643,6 +647,12 @@ function Index() {
       if (target) {
         const id = parseVideoId(target);
         if (id) return id;
+      }
+      // Requirement 1.2: Video ID is extracted from subtitles URL if present
+      const subUrlParam = params.get("subtitles_url") || params.get("sub_url");
+      if (subUrlParam) {
+        const idFromSub = extractVideoIdFromSubtitlesUrl(subUrlParam);
+        if (idFromSub) return idFromSub;
       }
       const isAndroidEnv = Boolean(nativeShell()) || params.get("android") === "true";
       if (isAndroidEnv) {
@@ -2124,21 +2134,82 @@ function Index() {
     const incomingSubUrl = appState.subUrl || appState.subtitlesUrl;
     if (incomingSubUrl) {
       setObservedUrl(incomingSubUrl);
-      const subLang = appState.subLang || appState.sourceLangCode || "en";
+      const subLang =
+        appState.subLang ||
+        appState.sourceLangCode ||
+        extractLanguageFromSubtitlesUrl(incomingSubUrl) ||
+        "en";
+
+      const applyIncomingTrack = (parsed: Json3, rawBody?: string) => {
+        if (!isValidJsonSubtitleResponse(parsed)) return;
+        setTracks((prev) => ({
+          ...(prev || {}),
+          [subLang]: parsed,
+        }));
+        setDefaultCaptionsLoaded(true);
+        setShown((prev) => Array.from(new Set([...prev, subLang])));
+        const effectiveVid = appState.videoId || videoId;
+        if (effectiveVid) {
+          saveCachedRawJson3(effectiveVid, subLang, rawBody || JSON.stringify(parsed));
+        }
+      };
+
+      // 1. Android Native Bridge fetch if available
+      const shell = nativeShell();
+      if (shell?.fetchTimedTextExact) {
+        try {
+          const exact = nativeExactFetch(shell, incomingSubUrl, true);
+          if (exact.status === 200 && isValidJsonSubtitleResponse(exact.body)) {
+            const parsed = parseJson3(exact.body);
+            if (parsed) {
+              applyIncomingTrack(parsed, exact.body);
+              return;
+            }
+          }
+        } catch (_err) {
+          // Native bridge fetch error, continue to direct fetch
+        }
+      }
+
+      // 2. Direct fetch with server proxy fallback
       fetch(incomingSubUrl)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((parsed) => {
+        .then(async (res) => {
+          if (!res.ok) return null;
+          const text = await res.text();
+          return parseJson3(text);
+        })
+        .then(async (parsed) => {
           if (parsed && isValidJsonSubtitleResponse(parsed)) {
-            setTracks((prev) => ({
-              ...(prev || {}),
-              [subLang]: parsed,
-            }));
-            setDefaultCaptionsLoaded(true);
-            saveCachedRawJson3(appState.videoId || videoId, subLang, JSON.stringify(parsed));
+            applyIncomingTrack(parsed);
+          } else {
+            const serverUrl = getFetchServerUrl();
+            if (serverUrl && incomingSubUrl.startsWith("http")) {
+              const proxyResp = await fetchViaServer(serverUrl, incomingSubUrl);
+              if (proxyResp.status === 200 && isValidJsonSubtitleResponse(proxyResp.body)) {
+                const proxyParsed = parseJson3(proxyResp.body);
+                if (proxyParsed) {
+                  applyIncomingTrack(proxyParsed, proxyResp.body);
+                }
+              }
+            }
           }
         })
-        .catch((err) => {
-          console.warn("[UrlState] Failed to fetch incomingSubUrl:", err);
+        .catch(async (err) => {
+          console.warn("[UrlState] Direct fetch error, trying server proxy fallback:", err);
+          const serverUrl = getFetchServerUrl();
+          if (serverUrl && incomingSubUrl.startsWith("http")) {
+            try {
+              const proxyResp = await fetchViaServer(serverUrl, incomingSubUrl);
+              if (proxyResp.status === 200 && isValidJsonSubtitleResponse(proxyResp.body)) {
+                const proxyParsed = parseJson3(proxyResp.body);
+                if (proxyParsed) {
+                  applyIncomingTrack(proxyParsed, proxyResp.body);
+                }
+              }
+            } catch (proxyErr) {
+              console.warn("[UrlState] Server proxy fetch error:", proxyErr);
+            }
+          }
         });
     } else if (appState.subData) {
       try {
@@ -6496,6 +6567,7 @@ function Index() {
         open={shareModalOpen}
         onOpenChange={setShareModalOpen}
         videoId={videoId}
+        baseLanguage={baseLanguage}
         targetLanguages={targetLanguages}
         observedUrl={
           observedUrl ||

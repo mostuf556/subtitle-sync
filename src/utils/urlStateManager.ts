@@ -44,7 +44,74 @@ export interface CreateShareableLinkOptions {
   time?: number;
   baseUrl?: string;
   useDemoSiteBase?: boolean;
+  minimal?: boolean;
 }
+
+/**
+ * Extracts YouTube 11-character video ID from a timedtext or subtitles URL (requirement 1.2)
+ */
+export function extractVideoIdFromSubtitlesUrl(subtitlesUrl?: string | null): string | null {
+  if (!subtitlesUrl || typeof subtitlesUrl !== "string") return null;
+  const trimmed = subtitlesUrl.trim();
+
+  // 1. Standard YouTube timedtext query param: ?v=... or &v=...
+  try {
+    const parsed = new URL(trimmed, "https://www.youtube.com");
+    const vParam = parsed.searchParams.get("v");
+    if (vParam && /^[a-zA-Z0-9_-]{11}$/.test(vParam)) {
+      return vParam;
+    }
+  } catch {}
+
+  const vMatch = /[?&]v=([a-zA-Z0-9_-]{11})(?:&|$)/.exec(trimmed);
+  if (vMatch && vMatch[1]) {
+    return vMatch[1];
+  }
+
+  // 2. Fixture path: /fixtures/<id>/...
+  const fixtureMatch = /\/fixtures\/([a-zA-Z0-9_-]{11})\//.exec(trimmed);
+  if (fixtureMatch && fixtureMatch[1]) {
+    return fixtureMatch[1];
+  }
+
+  // 3. YouTube embed or watch link in URL
+  const ytMatch = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([a-zA-Z0-9_-]{11})/.exec(
+    trimmed,
+  );
+  if (ytMatch && ytMatch[1]) {
+    return ytMatch[1];
+  }
+
+  return null;
+}
+
+/**
+ * Extracts language code from a timedtext URL (e.g. lang=iw, tlang=he) or fixture URL
+ */
+export function extractLanguageFromSubtitlesUrl(subtitlesUrl?: string | null): string | null {
+  if (!subtitlesUrl || typeof subtitlesUrl !== "string") return null;
+  const trimmed = subtitlesUrl.trim();
+  try {
+    const parsed = new URL(trimmed, "https://www.youtube.com");
+    const lang = parsed.searchParams.get("lang") || parsed.searchParams.get("tlang");
+    if (lang && lang.trim()) {
+      return lang.trim().toLowerCase();
+    }
+  } catch {}
+
+  const langMatch = /[?&](?:lang|tlang)=([a-zA-Z0-9_-]+)/i.exec(trimmed);
+  if (langMatch && langMatch[1]) {
+    return langMatch[1].toLowerCase();
+  }
+
+  const fixtureMatch = /\/fixtures\/[a-zA-Z0-9_-]{11}\/([a-zA-Z0-9_-]+)\.json/i.exec(trimmed);
+  if (fixtureMatch && fixtureMatch[1]) {
+    return fixtureMatch[1].toLowerCase();
+  }
+
+  return null;
+}
+
 
 /**
  * Checks for any URL parameter starting with `reset_` or `reset=true`
@@ -204,8 +271,8 @@ export function parseShareableUrlState(searchOrQuery: string): UrlAppState {
 
     // Default Subtitles URL
     const subUrl =
-      params.get("sub_url") ||
       params.get("subtitles_url") ||
+      params.get("sub_url") ||
       params.get("subs_url") ||
       params.get("caption_url") ||
       params.get("observed_url");
@@ -213,6 +280,24 @@ export function parseShareableUrlState(searchOrQuery: string): UrlAppState {
       const trimmed = subUrl.trim();
       state.subUrl = trimmed;
       state.subtitlesUrl = trimmed;
+
+      // Requirement 1.2: If videoId not already resolved, extract from subtitles URL
+      if (!state.videoId) {
+        const extractedId = extractVideoIdFromSubtitlesUrl(trimmed);
+        if (extractedId) {
+          state.videoId = extractedId;
+          state.url = `https://www.youtube.com/watch?v=${extractedId}`;
+        }
+      }
+
+      // If subLang not explicitly passed in query params, infer from subtitles URL
+      if (!state.subLang) {
+        const inferredLang = extractLanguageFromSubtitlesUrl(trimmed);
+        if (inferredLang) {
+          state.subLang = inferredLang;
+          state.sourceLangCode = inferredLang;
+        }
+      }
     }
 
     // Default Subtitles Data
@@ -287,57 +372,79 @@ export function getAppStateFromUrl(): UrlAppState {
 }
 
 /**
- * Creates a rich shareable link containing videoId, default subtitles URL/data, OpenRouter API key, target languages, and TTS provider
+ * Creates a shareable link.
+ * 1.1 The subtitles URL of the default language is encoded as `subtitles_url`
+ * 1.2 The video ID is extracted from 1.1 (the subtitles URL)
+ * 1.3 Uses base URL https://mostuf2556.github.io/subtitle-sync
+ * Generates minimal parameters without redundant or duplicated keys.
  */
 export function createShareableLink(options: CreateShareableLinkOptions): string {
   const origin =
     options.baseUrl ||
-    (options.useDemoSiteBase
+    (options.useDemoSiteBase || options.minimal === true
       ? DEMO_SITE_BASE_URL
       : typeof window !== "undefined" && window.location
         ? `${window.location.origin}${window.location.pathname}`
         : DEMO_SITE_BASE_URL);
   const params = new URLSearchParams();
 
-  if (options.videoId) {
-    params.set("v", options.videoId);
+  const rawSubUrl = (options.subtitlesUrl || options.subUrl || "").trim();
+
+  // 1.2: Video ID is extracted from the subtitles URL (1.1) if available, falling back to options.videoId
+  let effectiveVideoId = options.videoId;
+  if (rawSubUrl) {
+    const extractedId = extractVideoIdFromSubtitlesUrl(rawSubUrl);
+    if (extractedId) {
+      effectiveVideoId = extractedId;
+    }
   }
+
+  if (effectiveVideoId) {
+    params.set("v", effectiveVideoId);
+  }
+
+  // 1.1: Default language subtitles URL (encoded)
+  if (rawSubUrl) {
+    params.set("subtitles_url", rawSubUrl);
+  }
+
+  // Minimal mode: emits strictly minimal parameters (v + subtitles_url) per requirement 1
+  if (options.minimal) {
+    const query = params.toString();
+    return query ? `${origin}?${query}` : origin;
+  }
+
+  // Non-minimal options (legacy detailed link):
   const sourceLang = (options.sourceLangCode || options.subLang || "").toLowerCase().trim();
   if (sourceLang) {
     params.set("source_lang_code", sourceLang);
     params.set("sub_lang", sourceLang);
   }
-  const rawSubUrl = (options.subtitlesUrl || options.subUrl || "").trim();
-  if (rawSubUrl) {
-    params.set("subtitles_url", rawSubUrl);
+
+  if (rawSubUrl && options.subUrl) {
     params.set("sub_url", rawSubUrl);
   }
+
   if (options.targetLangs && options.targetLangs.length > 0) {
     const joined = options.targetLangs.map((l) => l.toLowerCase().trim()).join(",");
     params.set("Target_langs", joined);
-    params.set("target_langs", joined);
-    if (!options.targetLang) {
-      params.set("target_lang", options.targetLangs[0].toLowerCase().trim());
-    }
+  } else if (options.targetLang) {
+    params.set("target_lang", options.targetLang.toLowerCase().trim());
   }
-  if (options.targetLang) {
-    const tl = options.targetLang.toLowerCase().trim();
-    params.set("target_lang", tl);
-    if (!params.has("Target_langs")) {
-      params.set("Target_langs", tl);
-    }
-  }
+
   if (options.ttsProvider) {
     params.set("tts_provider", options.ttsProvider.trim());
   }
+
   if (options.openRouterApiKey && options.openRouterApiKey.trim()) {
-    const rawKey = options.openRouterApiKey.trim();
-    params.set("encoded_openrouter_key", encodeURIComponent(rawKey));
-    params.set("openrouter_key", rawKey);
+    params.set("openrouter_key", options.openRouterApiKey.trim());
+    params.set("encoded_openrouter_key", encodeURIComponent(options.openRouterApiKey.trim()));
   }
+
   if (options.subData) {
     params.set("sub_data", options.subData.trim());
   }
+
   if (typeof options.time === "number" && options.time > 0) {
     params.set("t", Math.floor(options.time).toString());
   }

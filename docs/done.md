@@ -1,5 +1,37 @@
 # Done tasks
 
+## Task 185: Minimal URL Sharing with Subtitles URL, Video ID Extraction, and State Reproduction (Version 1.0.79)
+
+### Summary:
+- **Requirement 1.1: Default Subtitles URL Encoding (`src/utils/urlStateManager.ts`)**:
+  - `createShareableLink`: Encodes the default language subtitles URL in `subtitles_url` without emitting duplicate bloated parameters (`sub_url`, multiple casing of `target_langs`, `source_lang_code`, etc.).
+  - Added `minimal?: boolean` option to `CreateShareableLinkOptions`, which produces a clean URL containing only `v` and `subtitles_url`.
+- **Requirement 1.2: Video ID Extraction from Subtitles URL (`src/utils/urlStateManager.ts`)**:
+  - Added and exported `extractVideoIdFromSubtitlesUrl(url)`: Extracts 11-character video ID from YouTube query parameter `v=...` (or fixture path `/fixtures/<id>/...` or embed link) embedded in the timedtext URL.
+  - In `createShareableLink`: When a subtitles URL is present, the video ID is extracted directly from 1.1 (the subtitles URL) to ensure the video ID always matches the subtitle stream.
+  - In `parseShareableUrlState`: If `v` is missing from query string, extracts `videoId` from `subtitles_url`.
+  - Added `extractLanguageFromSubtitlesUrl(url)`: Extracts the authentic spoken language code (`lang=` or `tlang=`) from the subtitles URL (e.g. `lang=iw` -> `"iw"`).
+- **Requirement 1.3: Enforce Demo Site Base URL**:
+  - The shared URL strictly uses base URL `https://mostuf2556.github.io/subtitle-sync` (the original repo's GitHub page).
+- **ShareStateModal Minimal Link Option (`src/components/ShareStateModal.tsx`)**:
+  - Added a "Minimal Info Link (Recommended)" toggle, enabled by default, ensuring shared links are compact, reliable, and reproduce state effortlessly.
+  - Passed `baseLanguage` prop properly from `src/routes/index.tsx`.
+- **Bulletproof URL State Hydration & Reproduction (`src/routes/index.tsx`)**:
+  - `videoId` initial state checks `extractVideoIdFromSubtitlesUrl(subtitles_url)` to guarantee instant alignment with the shared subtitles stream.
+  - On mount, if `subtitles_url` is present, it automatically infers `subLang` from the timedtext URL (e.g. `lang=iw`), fetches subtitles using a multi-tier fallback (Android native bridge -> direct fetch -> server proxy), sets `tracks`, displays the language column, sets `baseLanguage`, and marks `defaultCaptionsLoaded(true)`.
+- **Web Demo Input Fix (`src/components/WebDemoUrlsInput.tsx`)**:
+  - Extracts video ID from subtitles URL when available.
+  - Fixed single timedtext URL handling to always preserve and fetch the original unaltered URL for the original language first, instead of discarding it for derived target codes.
+- **Version 1.0.79 Synchronization Across All 5 Targets**:
+  - Synchronized `1.0.79` / versionCode `10079` across `package.json`, `android-shell/app/build.gradle.kts`, `src/config/appConfig.ts`, `src/utils/apkUpdater.ts`, and `src/utils/appSettings.ts`.
+- **Verification**:
+  - Added dedicated automated test `scripts/verify-minimal-share-url.ts` (`npm run test:minimal-share-url`).
+  - Updated `scripts/verify-subtitles-url-encoding-in-share-link.ts` (`npm run test:subtitles-url-encoding`).
+  - Ran `npm run test:android-share-subtitles-link`, `npm run test:subtitles-fixtures-restriction`, and `npm run test:application-stages-pipeline` (all 100% PASS).
+  - Code linting (`lint_applet`) and compilation (`compile_applet`) clean with 0 errors.
+
+---
+
 ### Hotfix: Fix missing useEffect import in ShareStateModal (Version 1.0.78)
 
 - **Root Cause & Fix**: In `src/components/ShareStateModal.tsx`, `useEffect` was called to synchronize the detected timedtext URL into state, but was not included in the top-level React named imports (`import React, { useState, useMemo, useCallback } from "react";`), causing runtime `ReferenceError: useEffect is not defined` during modal mount in `src/routes/index.tsx`. Added `useEffect` to `import React, { useState, useEffect, useMemo, useCallback } from "react";`.

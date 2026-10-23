@@ -4,10 +4,10 @@ This document establishes the lightweight, high-efficiency operational protocol 
 
 ---
 
-## Active Task: Hotfix (Completed)
+## Active Task: Completed Task 185 (Minimal URL Sharing with Subtitles URL, Video ID Extraction, and State Reproduction - Version 1.0.79)
 
-- **Hotfix**: Fix missing `useEffect` import in `src/components/ShareStateModal.tsx` and bump version to `1.0.78` - COMPLETED and migrated to `docs/done.md`.
-- **Active Subtask**: None pending. All tests pass 100%, app compiled and linted.
+- **Status**: [COMPLETED]
+- **Verification**: Verified via `scripts/verify-minimal-share-url.ts`, `scripts/verify-subtitles-url-encoding-in-share-link.ts`, and full regression suites. Clean compilation and linting. Migrated to `docs/done.md`.
 
 ---
 

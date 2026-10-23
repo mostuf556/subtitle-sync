@@ -4,10 +4,10 @@ This file is strictly the active backlog containing pending, active, and upcomin
 
 ## Active Tasks
 
-_(No active tasks pending — Hotfix completed and migrated to `docs/done.md`)_
+_(All active prompt tasks completed and migrated to `docs/done.md`)_
 
 ---
 
 ## Later Tasks
 
-_(No remaining later tasks — all active prompt tasks staged)_
+_(No remaining later tasks — all active prompt tasks staged and completed)_

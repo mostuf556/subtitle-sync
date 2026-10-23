@@ -183,7 +183,7 @@ console.log("✅ PASS: Index route mounts ShareStateModal and hydrates all share
 
 // 6. Verify Version Synchronization Across All 5 Targets
 console.log("\n🔢 Section 6: Version Synchronization Across All 5 Targets");
-const validVersions = ["1.0.76", "1.0.77", "1.0.78"];
+const validVersions = ["1.0.76", "1.0.77", "1.0.78", "1.0.79"];
 
 const pkg = JSON.parse(fs.readFileSync(path.resolve(rootDir, "package.json"), "utf-8"));
 assert(validVersions.includes(pkg.version), `package.json version must be one of ${validVersions.join(", ")}, got ${pkg.version}`);
