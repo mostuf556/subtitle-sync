@@ -4,10 +4,10 @@ This document establishes the lightweight, high-efficiency operational protocol 
 
 ---
 
-## Active Task: Completed Task 185 (Minimal URL Sharing with Subtitles URL, Video ID Extraction, and State Reproduction - Version 1.0.79)
+## Active Task: Completed Task 186 (Bump APK and Application Version to 2.0.0)
 
 - **Status**: [COMPLETED]
-- **Verification**: Verified via `scripts/verify-minimal-share-url.ts`, `scripts/verify-subtitles-url-encoding-in-share-link.ts`, and full regression suites. Clean compilation and linting. Migrated to `docs/done.md`.
+- **Verification**: Verified via `scripts/verify-v2-version-bump.ts` and all regression test suites. Clean compilation and linting. Migrated to `docs/done.md`.
 
 ---
 

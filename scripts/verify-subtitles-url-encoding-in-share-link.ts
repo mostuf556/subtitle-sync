@@ -133,37 +133,40 @@ assert(
 
 console.log("✅ PASS: src/routes/index.tsx correctly hydrides subtitles_url and feeds native bridge fallback");
 
-// 5. Verify App Version 1.0.79 Parity Across All 5 Version Targets
-console.log("\n🏷️ Section 5: Version Parity Verification across all 5 Targets (1.0.79)");
+// 5. Verify App Version Parity Across All 5 Version Targets
+console.log("\n🏷️ Section 5: Version Parity Verification across all 5 Targets");
+
+const expectedVer = "2.0.0";
+const expectedCode = "20000";
 
 // Target 1: package.json
 const pkgJsonPath = path.resolve(rootDir, "package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
-assert.strictEqual(pkg.version, "1.0.79", "package.json version must be 1.0.79");
+assert.strictEqual(pkg.version, expectedVer, `package.json version must be ${expectedVer}`);
 console.log(`✅ Target 1: package.json version = ${pkg.version}`);
 
 // Target 2: android-shell/app/build.gradle.kts
 const gradlePath = path.resolve(rootDir, "android-shell/app/build.gradle.kts");
 const gradleContent = fs.readFileSync(gradlePath, "utf-8");
 assert(
-  gradleContent.includes('versionName = "1.0.79"'),
-  "android-shell/app/build.gradle.kts versionName must be 1.0.79",
+  gradleContent.includes(`versionName = "${expectedVer}"`),
+  `android-shell/app/build.gradle.kts versionName must be ${expectedVer}`,
 );
 assert(
-  gradleContent.includes("versionCode = 10079"),
-  "android-shell/app/build.gradle.kts versionCode must be 10079",
+  gradleContent.includes(`versionCode = ${expectedCode}`),
+  `android-shell/app/build.gradle.kts versionCode must be ${expectedCode}`,
 );
-console.log("✅ Target 2: build.gradle.kts versionName = 1.0.79, versionCode = 10079");
+console.log(`✅ Target 2: build.gradle.kts versionName = ${expectedVer}, versionCode = ${expectedCode}`);
 
 // Target 3: src/config/appConfig.ts
-assert.strictEqual(APP_VERSION, "1.0.79", "src/config/appConfig.ts APP_VERSION must be 1.0.79");
+assert.strictEqual(APP_VERSION, expectedVer, `src/config/appConfig.ts APP_VERSION must be ${expectedVer}`);
 console.log(`✅ Target 3: src/config/appConfig.ts APP_VERSION = ${APP_VERSION}`);
 
 // Target 4: src/utils/apkUpdater.ts
 assert.strictEqual(
   CURRENT_APK_VERSION,
-  "v1.0.79",
-  "src/utils/apkUpdater.ts CURRENT_APK_VERSION must be v1.0.79",
+  `v${expectedVer}`,
+  `src/utils/apkUpdater.ts CURRENT_APK_VERSION must be v${expectedVer}`,
 );
 console.log(`✅ Target 4: src/utils/apkUpdater.ts CURRENT_APK_VERSION = ${CURRENT_APK_VERSION}`);
 
@@ -171,13 +174,13 @@ console.log(`✅ Target 4: src/utils/apkUpdater.ts CURRENT_APK_VERSION = ${CURRE
 const appSettingsPath = path.resolve(rootDir, "src/utils/appSettings.ts");
 const appSettingsContent = fs.readFileSync(appSettingsPath, "utf-8");
 assert(
-  appSettingsContent.includes('version: "1.0.79"'),
-  "src/utils/appSettings.ts exportFullAppState snapshot version must be 1.0.79",
+  appSettingsContent.includes(`version: "${expectedVer}"`),
+  `src/utils/appSettings.ts exportFullAppState snapshot version must be ${expectedVer}`,
 );
-console.log("✅ Target 5: src/utils/appSettings.ts export snapshot version = 1.0.79");
+console.log(`✅ Target 5: src/utils/appSettings.ts export snapshot version = ${expectedVer}`);
 
 console.log("\n=========================================================================");
-console.log("🎉 ALL TESTS PASSED! Subtitles URL encoding & Version 1.0.79 verified!");
+console.log(`🎉 ALL TESTS PASSED! Subtitles URL encoding & Version ${expectedVer} verified!`);
 console.log("=========================================================================");
 
 

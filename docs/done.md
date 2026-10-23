@@ -1,5 +1,29 @@
 # Done tasks
 
+## Task 186: Bump APK & Application Version to 2.0.0 (versionCode 20000)
+
+### Summary:
+- **Major Version 2.0.0 Bump**: Bumped APK and application version from `1.0.79` to `2.0.0` (versionCode `20000`) per user request to bump APK version to `2.*.*`.
+- **Synchronized Across All 5 Version Targets**:
+  1. `package.json`: `"version": "2.0.0"`
+  2. `android-shell/app/build.gradle.kts`: `versionName = "2.0.0"`, `versionCode = 20000`
+  3. `src/config/appConfig.ts`: `APP_VERSION = "2.0.0"`, updated `APP_VERSION_DESCRIPTION`
+  4. `src/utils/apkUpdater.ts`: `CURRENT_APK_VERSION = "v2.0.0"`
+  5. `src/utils/appSettings.ts`: `exportFullAppState` snapshot `version: "2.0.0"`
+- **Dedicated Automated Test**: Added `scripts/verify-v2-version-bump.ts` (`npm run test:v2-version-bump`), asserting regex pattern `^2\.\d+\.\d+$`, version `2.0.0`, versionCode `20000`, and consistency across all 5 targets.
+- **Test Suite Updates**: Updated `scripts/verify-subtitles-url-encoding-in-share-link.ts` and `scripts/verify-android-share-subtitles-link.ts` to validate version `2.0.0`.
+- **Verification**:
+  - `npm run test:v2-version-bump`: 100% PASS
+  - `npm run test:minimal-share-url`: 100% PASS
+  - `npm run test:subtitles-url-encoding`: 100% PASS
+  - `npm run test:android-share-subtitles-link`: 100% PASS
+  - `npm run test:subtitles-fixtures-restriction`: 100% PASS
+  - `npm run test:application-stages-pipeline`: 100% PASS
+  - `lint_applet`: 0 errors
+  - `compile_applet`: Build succeeded
+
+---
+
 ## Task 185: Minimal URL Sharing with Subtitles URL, Video ID Extraction, and State Reproduction (Version 1.0.79)
 
 ### Summary:
